@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="a7788564-9fb4-4e28-ad58-ba7fe7712381" basePath="/somepath" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="FunWithPayload" doc:id="7a6a6aad-528a-4b8e-93d1-58d298529ca9" >
+		<set-payload value="Day 2 of training" doc:name="Set Payload" doc:id="f5ff7410-469a-4418-af05-e907474e8912" />
+		<set-variable value="6" doc:name="JobLevel" doc:id="94591c42-fdda-4565-b2d4-41dc8976f529" variableName="JobLevel" />
+		<set-payload value="#[payload ++ ' and it is awesome. the maximum job level of attendees is = ' ++ vars.JobLevel]" doc:name="Set Payload" doc:id="ab8725a8-3273-4d69-809d-3c33f28f9b11" />
+	</flow>
+	<sub-flow name="LogSubFlow" doc:id="83c3a115-968b-4807-bf37-6efe4ad4bc45" >
+		<logger level="INFO" doc:name="Logger" doc:id="80a1d433-cf78-4f31-ba4a-217492806e24" message="log1" />
+		<logger level="INFO" doc:name="Logger" doc:id="5479e53b-3265-4ed7-863d-4620ed60c13d" message="Maithri is the Educator" />
+		<logger level="INFO" doc:name="Logger" doc:id="6348ac0e-816d-4b42-96d3-077160d24726" message="payload" />
+	</sub-flow>
+	<flow name="Flow1" doc:id="0dbf3eea-7c14-4bf1-8cb6-21bda399fe49" >
+		<http:listener doc:name="Listener" doc:id="3689ba62-f52d-479f-acbb-4e567a7f10d2" config-ref="HTTP_Listener_config" path="/dummies" allowedMethods="GET">
+			<repeatable-in-memory-stream />
+			<http:response statusCode="200" reasonPhrase="Awesome" />
+		</http:listener>
+		<flow-ref doc:name="LogSubFlow" doc:id="7496f7a0-3f8e-4901-ad21-2e903cec146e" name="LogSubFlow" />
+		<flow-ref doc:name="Fun With Payload" doc:id="d336da52-376c-45b5-9cfb-c5d6f4f05581" name="FunWithPayload" />
+		<logger level="INFO" doc:name="Logger" doc:id="b43abb61-c47a-4a9a-a2f9-187f3de51d1c" message="#[payload]"/>
+		<remove-variable doc:name="Remove Variable" doc:id="8f460ca5-8d44-44c6-8d6e-3b8226a74599" variableName="#[vars.JobLevel]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="48f3e35e-14d0-4801-a05f-b55d99441b39" />
+	</flow>
+</mule>
